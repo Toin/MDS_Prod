@@ -39,6 +39,11 @@ Public Class SOToMFG
             SBO_Application.MessageBox("MDS Production Addon now terminate...")
             End
         End If
+
+        If EventType = SAPbouiCOM.BoAppEventTypes.aet_CompanyChanged Then
+            SBO_Application.MessageBox("Company Changed! MDS Production Addon now terminate...")
+            End
+        End If
     End Sub
 
 
@@ -1570,7 +1575,8 @@ Public Class SOToMFG
         Dim oPdODocSeriesRec As SAPbobsCOM.Recordset
 
         Dim strQry As String = ""
-        Dim oPdODocSeries As String = ""
+        Dim oPdODocSeriesOrder As String = ""
+        Dim oPdODocSeriesJasa As String = ""
 
         oSOToMFGGrid = oForm.Items.Item("myGrid").Specific
 
@@ -1602,36 +1608,47 @@ Public Class SOToMFG
 
         ' FG-002: PENJUALAN JASA (SERIENAME:2011JS), FG-001: PENJUALAN ORDER (SERIENAME:2011) 
 
-        If oSOToMFGGrid.DataTable.GetValue(12, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) = "FG-002" Then
-            'oProd1.Series = 45
-            strQry = "SELECT TOP 1 Series FROM NNM1 WHERE ObjectCode = '202' AND RIGHT(SeriesName, 2) = 'JS' AND Indicator = YEAR(GETDATE()) "
-        Else
-            'oProd1.Series = 27
-            strQry = "SELECT TOP 1 Series FROM NNM1 WHERE ObjectCode = '202' AND RIGHT(SeriesName, 2) <> 'JS' AND Indicator = YEAR(GETDATE()) "
-        End If
+        'If oSOToMFGGrid.DataTable.GetValue(12, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) = "FG-002" Then
+        '    'oProd1.Series = 45
+        '    strQry = "SELECT TOP 1 Series FROM NNM1 WHERE ObjectCode = '202' AND RIGHT(SeriesName, 2) = 'JS' AND Indicator = YEAR(GETDATE()) "
+        'Else
+        '    'oProd1.Series = 27
+        '    strQry = "SELECT TOP 1 Series FROM NNM1 WHERE ObjectCode = '202' AND RIGHT(SeriesName, 2) <> 'JS' AND Indicator = YEAR(GETDATE()) "
+        'End If
 
+        strQry = "SELECT TOP 1 Series FROM NNM1 WHERE ObjectCode = '202' AND RIGHT(SeriesName, 2) = 'JS' AND Indicator = YEAR(GETDATE()) "
 
         oPdODocSeriesRec.DoQuery(strQry)
         '??? 
         If oPdODocSeriesRec.RecordCount <> 0 Then
-            oPdODocSeries = oPdODocSeriesRec.Fields.Item("Series").Value
+            oPdODocSeriesJasa = oPdODocSeriesRec.Fields.Item("Series").Value
         Else
-            MsgBox("Production Order Document Series Tidak ada, Mohon Setup PdO Document Series!")
+            MsgBox("Production Order Document Series Jasa Tidak ada, Mohon Setup PdO Document Series!")
             Exit Sub
         End If
 
+        strQry = "SELECT TOP 1 Series FROM NNM1 WHERE ObjectCode = '202' AND RIGHT(SeriesName, 2) <> 'JS' AND Indicator = YEAR(GETDATE()) "
+        oPdODocSeriesRec.DoQuery(strQry)
+        '??? 
+        If oPdODocSeriesRec.RecordCount <> 0 Then
+            oPdODocSeriesOrder = oPdODocSeriesRec.Fields.Item("Series").Value
+        Else
+            MsgBox("Production Order Document Series Kaca Order Tidak ada, Mohon Setup PdO Document Series!")
+            Exit Sub
+        End If
 
         System.Runtime.InteropServices.Marshal.ReleaseComObject(oPdODocSeriesRec)
         oPdODocSeriesRec = Nothing
         GC.Collect()
 
-        If oPdODocSeries <> "" Then
+        If oPdODocSeriesOrder <> "" And oPdODocSeriesJasa <> "" Then
 
             'If oSOToMFGGrid.Rows.Count > 5 Then
             '    SBO_Application.MessageBox("Minimal 5 To Generate So", 1, "OK")
             'Else
             'Loop only selected/checked in grid rows and exit.
             For idx = oSOToMFGGrid.Rows.Count - 1 To 0 Step -1
+                oForm.Items.Item("SoNumber").Click()
                 SBO_Application.SetStatusBarMessage("Generating PdO.... Start !!! " & idx + 1 & " ", SAPbouiCOM.BoMessageTime.bmt_Short, False)
 
                 If oSOToMFGGrid.DataTable.GetValue(1, oSOToMFGGrid.GetDataTableRowIndex(idx)) = "Y" Then
@@ -1665,24 +1682,26 @@ Public Class SOToMFG
 
 
 
-                    Try
-                        SetApplication()
+                    'Try
+                    '    SetApplication()
 
-                        vCompany = New SAPbobsCOM.Company
-                        'Dim sCookie As String = vCompany.GetContextCookie
-                        'Dim sConnectionContext As String
-                        sCookie = vCompany.GetContextCookie
-                        sConnectionContext = SBO_Application.Company.GetConnectionContext(sCookie)
-                        vCompany.SetSboLoginContext(sConnectionContext)
-                        isconnect = vCompany.Connect()
+                    '    vCompany = New SAPbobsCOM.Company
+                    '    'Dim sCookie As String = vCompany.GetContextCookie
+                    '    'Dim sConnectionContext As String
+                    '    sCookie = vCompany.GetContextCookie
+                    '    sConnectionContext = SBO_Application.Company.GetConnectionContext(sCookie)
+                    '    vCompany.SetSboLoginContext(sConnectionContext)
+                    '    isconnect = vCompany.Connect()
 
-                        'If vCompany.Connect() <> 0 Then
-                        If isconnect <> 0 Then
-                            End
-                        End If
-                    Catch ex As Exception
-                        End
-                    End Try
+                    '    'If vCompany.Connect() <> 0 Then
+                    '    If isconnect <> 0 Then
+                    '        End
+                    '    End If
+                    'Catch ex As Exception
+                    '    End
+                    'End Try
+
+                    oForm.Items.Item("SoNumber").Click()
 
 
                     'vCompany = New SAPbobsCOM.Company
@@ -1697,8 +1716,11 @@ Public Class SOToMFG
 
                     'vCompany = oCompany
 
-                    vCompany.StartTransaction()
-                    'oCompany.StartTransaction()
+                    'vCompany.StartTransaction()
+
+                    If Not oCompany.InTransaction Then
+                        oCompany.StartTransaction()
+                    End If
 
 
                     'oSO = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
@@ -1713,25 +1735,27 @@ Public Class SOToMFG
 
                     'vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset)
 
-                    oRS = vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset)
+                    oRS = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset)
                     strQry = "SELECT DocNum FROM OWOR WHERE Status <> 'C' AND OriginNum =  " & oSOToMFGGrid.DataTable.GetValue(4, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) _
                         & " AND ItemCode = '" & oSOToMFGGrid.DataTable.GetValue(9, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) & "' "
                     oRS.DoQuery(strQry)
                     'oRS.DoQuery("UPDATE RDR1 SET U_bacthNum = 'b321' where docentry = 249 and linenum = 0")
 
+                    oForm.Items.Item("BPCardCode").Click()
 
                     'If oRS.RecordCount <> 0 Then
                     '    MsgBox("ada record!")
                     'End If
 
-                    If oRS.RecordCount = 0 Then
+                    'If oRS.RecordCount = 0 Then -- if duplicate don't insert PdO
+                    If oRS.RecordCount <> 0 Or oRS.RecordCount = 0 Then
 
-                        'oProd1 = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oProductionOrders)
-                        oProd1 = vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oProductionOrders)
+                        oProd1 = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oProductionOrders)
+                        'oProd1 = vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oProductionOrders)
 
                         'oprod1.ItemNo = "S10000"
                         'oprod1.DueDate = Today
-                        oProd1.PlannedQuantity = 2
+                        'oProd1.PlannedQuantity = 2
 
                         ''Fill oPdO properties...oProductionOrder
                         ''oProdOrder.ItemNo = oSOToMFGGrid.DataTable.GetValue(9, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString)
@@ -1747,10 +1771,10 @@ Public Class SOToMFG
 
                         If oSOToMFGGrid.DataTable.GetValue(12, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) = "FG-001" Then
                             'oProd1.Series = 27
-                            oProd1.Series = oPdODocSeries
+                            oProd1.Series = oPdODocSeriesOrder
                         Else
                             'oProd1.Series = 45
-                            oProd1.Series = oPdODocSeries
+                            oProd1.Series = oPdODocSeriesJasa
                         End If
 
                         'oProd1.ItemNo = "KTF12CLXX589"
@@ -1761,7 +1785,7 @@ Public Class SOToMFG
                         ''oProdOrder.DueDate = oSOToMFGGrid.DataTable.GetValue(13, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString)
 
                         'PdO Posting Date = SO Posting Date
-                        oProd1.PostingDate = oSOToMFGGrid.DataTable.GetValue(2, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString)
+                        'oProd1.PostingDate = oSOToMFGGrid.DataTable.GetValue(2, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString)
                         oProd1.PostingDate = Format(Now, "yyyy-MM-dd")
 
                         Dim dueDt As DateTime
@@ -1876,18 +1900,23 @@ Public Class SOToMFG
 
 
                         If lRetCode <> 0 Then
-                            'oCompany.GetLastError(lErrCode, sErrMsg)
-                            vCompany.GetLastError(lErrCode, sErrMsg)
+                            oCompany.GetLastError(lErrCode, sErrMsg)
+                            'vCompany.GetLastError(lErrCode, sErrMsg)
                             SBO_Application.MessageBox(lErrCode & ": " & sErrMsg)
                             'vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
+
+                            If oCompany.InTransaction Then
+                                oCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
+                            End If
                         Else
 
                             Dim PdOno As String = ""
                             Dim tmpKey As Double
                             Dim vSOLine As Long
 
-                            vCompany.GetNewObjectCode(tmpKey)
-                            vCompany.GetNewObjectCode(PdOno)
+                            'vCompany.GetNewObjectCode(tmpKey)
+                            'vCompany.GetNewObjectCode(PdOno)
+                            oCompany.GetNewObjectCode(PdOno)
                             tmpKey = Convert.ToInt32(PdOno)
 
                             ' !!!! Make sure before create another object type-> clear previous/current object type.
@@ -1899,11 +1928,13 @@ Public Class SOToMFG
 
                             'GC.Collect()
 
+                            oForm.Items.Item("SoNumber").Click()
+
                             'vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
 
 
-                            oSalesOrder = vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
-                            'oSalesOrder = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
+                            'oSalesOrder = vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
+                            oSalesOrder = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
                             oSalesOrder.GetByKey(oSOToMFGGrid.DataTable.GetValue(3, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString))
                             'oSalesOrder.UserFields.Fields.Item("U_MIS_ReasonCode").Value = "T1"
 
@@ -1925,7 +1956,12 @@ Public Class SOToMFG
                             'oSalesOrderLines = Nothing
 
                             'vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
-                            vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit)
+
+                            If oCompany.InTransaction Then
+                                oCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit)
+
+                            End If
+                            'vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit)
                             'oCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit)
                             'vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit)
 
@@ -1940,9 +1976,9 @@ Public Class SOToMFG
 
                     ' by Toin 2011-02-09 Check Duplicate PdO before Generate PdO
 
-                    vCompany.Disconnect()
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(vCompany)
-                    vCompany = Nothing
+                    'vCompany.Disconnect()
+                    'System.Runtime.InteropServices.Marshal.ReleaseComObject(vCompany)
+                    'vCompany = Nothing
 
                     GC.Collect()
                     'MsgBox(GC.GetTotalMemory(True))
