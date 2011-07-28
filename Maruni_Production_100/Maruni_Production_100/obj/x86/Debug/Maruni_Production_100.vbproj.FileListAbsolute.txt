@@ -96,3 +96,17 @@ D:\Working\SAP\MARUNI\Source Production MARUNI\Maruni_Production_100\Maruni_Prod
 D:\Working\SAP\MARUNI\Source Production MARUNI\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\ResolveAssemblyReference.cache
 D:\Working\SAP\MARUNI\Source Production MARUNI\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production.Resources.resources
 D:\Working\SAP\MARUNI\Source Production MARUNI\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production_100.vbproj.GenerateResource.Cache
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Interop.SAPbobsCOM.dll
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Interop.SAPbouiCOM.dll
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production_100.vbproj.ResolveComReference.cache
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production.exe
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production.xml
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production.pdb
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\bin\Maruni_Production.exe
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\bin\Maruni_Production.pdb
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\bin\Maruni_Production.xml
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\bin\Interop.SAPbobsCOM.dll
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\bin\Interop.SAPbouiCOM.dll
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\ResolveAssemblyReference.cache
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production.Resources.resources
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Debug\Maruni_Production_100.vbproj.GenerateResource.Cache

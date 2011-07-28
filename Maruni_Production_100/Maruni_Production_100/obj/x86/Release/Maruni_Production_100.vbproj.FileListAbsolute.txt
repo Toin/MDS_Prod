@@ -26,3 +26,9 @@ E:\karno\Maruni_Production_100\Maruni_Production_100\bin\Maruni_Production.pdb
 E:\karno\Maruni_Production_100\Maruni_Production_100\bin\Maruni_Production.xml
 E:\karno\Maruni_Production_100\Maruni_Production_100\bin\Interop.SAPbobsCOM.dll
 E:\karno\Maruni_Production_100\Maruni_Production_100\bin\Interop.SAPbouiCOM.dll
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Release\Interop.SAPbobsCOM.dll
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Release\Interop.SAPbouiCOM.dll
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Release\Maruni_Production_100.vbproj.ResolveComReference.cache
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Release\Maruni_Production.exe
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Release\Maruni_Production.xml
+E:\GITRepo\MDSProd\Maruni_Production_100\Maruni_Production_100\obj\x86\Release\Maruni_Production.pdb

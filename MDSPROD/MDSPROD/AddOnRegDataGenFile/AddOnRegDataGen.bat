@@ -1,0 +1,1 @@
+"C:\Program Files\SAP\SAP Business One SDK\Tools\AddOnRegDataGen\AddOnRegDataGen.exe" "D:\MaruniProductionAddonRev2\MDSPROD\MDSPROD\AddOnRegDataGenFile\MDSPROD.xml" "1.0.3" "D:\MaruniProductionAddonRev2\MDSPROD\MDSPROD\bin\MDSPROD.exe" "D:\MaruniProductionAddonRev2\MDSPROD\MDSPROD\bin\MDSPROD.exe" "D:\Maruni_Production_100\Maruni_Production_100\bin\Maruni_Production.exe"

@@ -387,6 +387,69 @@ Public Class SOToMFG
         SOToMFGFormValid = isFormValid
     End Function
 
+    'Private Sub LoadFormPdOOverHead()
+    '    Dim oForm As SAPbouiCOM.Form
+
+    '    Dim oEditText As SAPbouiCOM.EditText
+
+    '    Try
+    '        oForm = SBO_Application.Forms.Item(Production_FormId)
+    '        'oForm = SBO_Application.Forms.Item("mds_pdo1")
+    '        SBO_Application.MessageBox("Form Already Open")
+    '    Catch ex As Exception
+    '        Dim fcp As SAPbouiCOM.FormCreationParams
+    '        fcp = SBO_Application.CreateObject(SAPbouiCOM.BoCreatableObjectType.cot_FormCreationParams)
+    '        fcp.BorderStyle = SAPbouiCOM.BoFormBorderStyle.fbs_Fixed
+    '        fcp.FormType = "mds_pdo1"
+    '        fcp.UniqueID = "mds_pdo1"
+    '        fcp.XmlData = LoadFromXML("ShowOverHeadItems.srf")
+
+    '        oForm = SBO_Application.Forms.AddEx(fcp)
+    '        oForm.Freeze(True)
+
+    '        'oForm.Freeze(True)
+
+    '        '' Add User DataSource
+    '        '' not binding to SBO data or UDO/UDF
+    '        'oForm.DataSources.DataTables.Add("DelOutLst")
+    '        'oForm.DataSources.UserDataSources.Add("TxtDtfrm", SAPbouiCOM.BoDataType.dt_DATE)
+    '        'oForm.DataSources.UserDataSources.Add("TxtDtTo", SAPbouiCOM.BoDataType.dt_DATE)
+
+    '        oForm.DataSources.UserDataSources.Add("ItemCodeX", SAPbouiCOM.BoDataType.dt_LONG_TEXT)
+    '        oForm.DataSources.UserDataSources.Add("RunTimeQty", SAPbouiCOM.BoDataType.dt_SUM)
+
+    '        'Default value
+    '        oForm.DataSources.UserDataSources.Item("ItemCodeX").Value = "Xctp123"
+    '        oForm.DataSources.UserDataSources.Item("RunTimeQty").Value = "99"
+
+    '        oEditText = oForm.Items.Item("ItemCodeX").Specific
+    '        oEditText.DataBind.SetBound(True, "", "ItemCodeX")
+
+    '        oEditText = oForm.Items.Item("RunTimeQty").Specific
+    '        oEditText.DataBind.SetBound(True, "", "RunTimeQty")
+
+    '        ''Default value for SO Date
+    '        'oForm.DataSources.UserDataSources.Item("TxtDtfrm").Value = oForm.Items.Item("TxtDtFrm").Specific.string
+
+    '        'oForm.DataSources.UserDataSources.Item("TxtDtTo").Value = oForm.Items.Item("TxtDtTo").Specific.string
+
+
+    '        ''Default setting
+    '        '' add txtbox
+    '        ''        oEditText = oForm.Items.Add("SODate", SAPbouiCOM.BoFormItemTypes.it_EDIT).Specific
+
+
+    '        'oEditText = oForm.Items.Item("TxtDtFrm").Specific
+    '        'oEditText.DataBind.SetBound(True, "", "TxtDtFrm")
+    '        'oEditText = oForm.Items.Item("TxtDtTo").Specific
+    '        'oEditText.DataBind.SetBound(True, "", "TxtDtTo")
+
+    '        oForm.Freeze(False)
+
+
+    '    End Try
+    'End Sub
+
     Private Sub SOToMFGEntry()
         Dim oForm As SAPbouiCOM.Form
 
@@ -502,6 +565,7 @@ Public Class SOToMFG
             & " AND T1.LineStatus = 'O' " _
             & " AND T0.CardCode = '" & oForm.Items.Item("BPCardCode").Specific.string & "' " _
             & " AND (T1.U_MIS_ReleasePdOFlag = '' OR T1.U_MIS_ReleasePdOFlag IS NULL) " _
+            & " AND T0.U_SOApprovalStatus <> 'D' " _
             & " ORDER BY T0.DocDate, T0.DocNum, VisOrder DESC "
 
             '& " AND T1.WhsCode = 'FG-002' " _
@@ -557,6 +621,7 @@ Public Class SOToMFG
             & " AND T1.LineStatus = 'O' " _
             & " AND T0.CardCode = '" & oForm.Items.Item("BPCardCode").Specific.string & "' " _
             & " AND (T1.U_MIS_ReleasePdOFlag = '' OR T1.U_MIS_ReleasePdOFlag IS NULL) " _
+            & " AND T0.U_SOApprovalStatus <> 'D' " _
             & " ORDER BY T0.DocDate, T0.DocNum, VisOrder DESC "
         '& " AND T1.WhsCode = 'FG-002' " _
         '    & " AND T0.CardCode = '" & oForm.Items.Item("BPCardCode").Specific.string & "' " _
@@ -1015,6 +1080,7 @@ Public Class SOToMFG
             & " AND T0.CardCode = '" & oForm.Items.Item("BPCardCode").Specific.string & "' " _
             & " AND (T1.U_MIS_ReleasePdOFlag = '' OR T1.U_MIS_ReleasePdOFlag IS NULL) " _
             & " AND T0.Docnum = " & oForm.Items.Item("SoNumber").Specific.value & " " _
+            & " AND T0.U_SOApprovalStatus <> 'D' " _
             & " ORDER BY T0.DocDate, T0.DocNum, VisOrder DESC "
         '& " AND T1.WhsCode = 'FG-002' " _
 
@@ -2073,6 +2139,10 @@ errHandler:
 
     End Sub
 
+    'Private Sub ShowFormOverHead(ByVal oForm As SAPbouiCOM.Form)
+    '    LoadFormPdOOverHead()
+    'End Sub
+
     'Karno Generate PDO Status
     Private Sub GeneratePdOStatus(ByVal oForm As SAPbouiCOM.Form)
         'On Error GoTo errHandler
@@ -2305,7 +2375,7 @@ errHandler:
         'dDate = DateTime.Now
 
         'sbo formatdate
-        sboDate = oMis_Utils.fctFormatDate(dDate, oCompany)
+        sboDate = oMIS_Utils.fctFormatDate(dDate, oCompany)
 
         oForm.Freeze(False)
 
@@ -2670,6 +2740,56 @@ errHandler:
                 End If
             End If
 
+            If pVal.FormTypeEx = "mds_pdo1" Then
+                'MsgBox("mds pdo1 popup")
+
+                Select Case pVal.EventType
+                    Case SAPbouiCOM.BoEventTypes.et_ITEM_PRESSED
+                        If pVal.ItemUID = "btnFillOH" Then
+                            Dim oForm As SAPbouiCOM.Form = Nothing
+                            Dim oFormPdO As SAPbouiCOM.Form = Nothing
+
+
+                            Dim oMatrix As SAPbouiCOM.Matrix
+                            Dim oColumns As SAPbouiCOM.Columns
+
+                            Dim itemcodeX As String
+                            Dim runtimeQty As Double
+
+                            'oForm = SBO_Application.Forms.Item("mds_pdo1")
+                            oForm = SBO_Application.Forms.Item(pVal.FormUID)
+                            itemcodeX = oForm.Items.Item("ItemCodeX").Specific.string
+                            runtimeQty = oForm.Items.Item("RunTimeQty").Specific.string
+
+                            oForm.Close()
+
+                            'oFormPdO = SBO_Application.Forms.Item(Production_FormId)
+                            'oMatrix = oFormPdO.Items.Item("37").Specific
+
+                            'oFormPdO = objFormProduction
+                            'oFormPdO = SBO_Application.Forms.Item(Production_FormId)
+                            'oMatrix = oFormPdO.Items.Item("37").Specific
+                            oMatrix = objFormProduction.Items.Item("37").Specific
+                            oColumns = oMatrix.Columns
+
+
+                            MsgBox("button Fill OH: " & pVal.ItemUID & "; itemcode X: " & itemcodeX & "; Runtime = " & runtimeQty)
+
+
+                            'oColumns.Item("4").Cells.Item(pVal.Row).Specific.value = oColumns.Item("U_NBS_MatlQty").Cells.Item(pVal.Row).Specific.value * objFormProduction.Items.Item("12").Specific.value                        End If
+                            oColumns.Item("37").Cells.Item(pVal.Row).Specific.value = itemcodeX
+
+
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(oColumns)
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(oMatrix)
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(oFormPdO)
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(oForm)
+
+                        End If
+                End Select
+
+            End If
+
             ' karno Production
             If pVal.FormTypeEx = Production_FormId Then
                 If pVal.EventType <> SAPbouiCOM.BoEventTypes.et_FORM_CLOSE And pVal.EventType <> SAPbouiCOM.BoEventTypes.et_FORM_DEACTIVATE And pVal.EventType <> SAPbouiCOM.BoEventTypes.et_FORM_UNLOAD Then
@@ -2678,6 +2798,26 @@ errHandler:
 
 
                 Select Case pVal.EventType
+                    'Case SAPbouiCOM.BoEventTypes.et_ITEM_PRESSED
+                    '    Select Case pVal.CharPressed
+                    '        Case "244"
+                    '            MsgBox("tekan F4?")
+                    '        Case "9"
+                    '            MsgBox("press TAB")
+                    '    End Select
+
+                    'Case SAPbouiCOM.BoEventTypes.et_KEY_DOWN
+                    '    Select Case pVal.CharPressed And pVal.ItemUID = "37"
+                    '        Case 244
+                    '            MsgBox("tekan F4?")
+                    '        Case "9" And pVal.Modifiers = SAPbouiCOM.BoModifiersEnum.mt_None
+                    '            MsgBox("press TAB")
+                    '        Case 9 And pVal.Modifiers = SAPbouiCOM.BoModifiersEnum.mt_CTRL
+                    '            'MsgBox("press CTRL+TAB")
+                    '            'Dim oForm As SAPbouiCOM.Form
+                    '            ShowFormOverHead(objFormProduction)
+                    '    End Select
+
                     Case SAPbouiCOM.BoEventTypes.et_LOST_FOCUS
                         Select Case pVal.ColUID
                             Case "U_NBS_MatlQty"
