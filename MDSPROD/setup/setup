@@ -21,7 +21,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_21A38EB59C7743D49C1BF37A3DCFE112"
+        "MsmKey" = "8:_18BF904A97A84D00A520470AC2A1834B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1A38DC2949774D36BAB28D4C38456ECC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -34,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_353A897E0195BAD24B584A6C4230CF69"
-        "OwnerKey" = "8:_7C7DA881CA8841809C854FB5D770F023"
+        "OwnerKey" = "8:_5DA2CB671D1C472AAD0FF65715F470FE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -51,6 +57,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5DA2CB671D1C472AAD0FF65715F470FE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_5DC7512A86A21ED08792F0046BBC6BA7"
         "OwnerKey" = "8:_61617B50FE01BCD26B7251B30B37F2A4"
         "MsmSig" = "8:_UNDEFINED"
@@ -58,18 +70,12 @@
         "Entry"
         {
         "MsmKey" = "8:_61617B50FE01BCD26B7251B30B37F2A4"
-        "OwnerKey" = "8:_7C7DA881CA8841809C854FB5D770F023"
+        "OwnerKey" = "8:_5DA2CB671D1C472AAD0FF65715F470FE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_6DB9E9DA1FA7426895CBF3D20865B556"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7C7DA881CA8841809C854FB5D770F023"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -81,13 +87,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C203438D33B74B8AA21A704535C9838A"
+        "MsmKey" = "8:_ABBC5C1C0C864E2FB6EEA24829823263"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C427D7C06E8A42A9A5F91F7C46564C43"
+        "MsmKey" = "8:_B1C9C2DAA3534C00B73FEEC512FBBCB2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -112,25 +118,25 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_353A897E0195BAD24B584A6C4230CF69"
+        "OwnerKey" = "8:_B1C9C2DAA3534C00B73FEEC512FBBCB2"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C427D7C06E8A42A9A5F91F7C46564C43"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7C7DA881CA8841809C854FB5D770F023"
+        "OwnerKey" = "8:_5DA2CB671D1C472AAD0FF65715F470FE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_61617B50FE01BCD26B7251B30B37F2A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_353A897E0195BAD24B584A6C4230CF69"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -195,59 +201,59 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_547314185EEB45DEB5753E07AACCF250"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_37BB2746AD3B4CFDABA9ABC43770A064"
             {
             "Name" = "8:Primary output from CustomerLibrary (Active)"
             "Condition" = "8:"
-            "Object" = "8:_C427D7C06E8A42A9A5F91F7C46564C43"
-            "FileType" = "3:1"
-            "InstallAction" = "3:1"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_EB83C72A_FEAE_4DDF_9DAC_8C9CF2F6CEF2"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_B4449D1914D94E38B0471319D197EEDC"
-            {
-            "Name" = "8:Primary output from CustomerLibrary (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_C427D7C06E8A42A9A5F91F7C46564C43"
-            "FileType" = "3:1"
-            "InstallAction" = "3:3"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_905D54D3_1D54_4DAA_8283_1B96F32DFCB1"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_D210377505864926837BA5DD9C779B05"
-            {
-            "Name" = "8:Primary output from CustomerLibrary (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_C427D7C06E8A42A9A5F91F7C46564C43"
+            "Object" = "8:_B1C9C2DAA3534C00B73FEEC512FBBCB2"
             "FileType" = "3:1"
             "InstallAction" = "3:2"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_F1CD4748_3C3A_48C7_A3E3_ADC3D697FD98"
+            "Identifier" = "8:_4504241E_0B94_452D_B390_6D0426AAF267"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:/target=\"[TARGETDIR]\\\""
             }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_E1E0F07C593F430D9E4F8440B45BD159"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_5C46906D1D4A4292B9DB95D3725F40E4"
             {
             "Name" = "8:Primary output from CustomerLibrary (Active)"
             "Condition" = "8:"
-            "Object" = "8:_C427D7C06E8A42A9A5F91F7C46564C43"
+            "Object" = "8:_B1C9C2DAA3534C00B73FEEC512FBBCB2"
+            "FileType" = "3:1"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_0AF0FE77_17F3_4E7E_83B2_1E7BA9BA4FC9"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_813CB3E70B9F4B898355BDE13E220864"
+            {
+            "Name" = "8:Primary output from CustomerLibrary (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_B1C9C2DAA3534C00B73FEEC512FBBCB2"
+            "FileType" = "3:1"
+            "InstallAction" = "3:3"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_AE3EDFF3_5C08_47BB_9EB4_AA8C01A5229F"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_A69045849BA04AD18C4372D7A166CE9F"
+            {
+            "Name" = "8:Primary output from CustomerLibrary (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_B1C9C2DAA3534C00B73FEEC512FBBCB2"
             "FileType" = "3:1"
             "InstallAction" = "3:4"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_387EEB72_5FAE_40D4_AE3B_7ED702547CCB"
+            "Identifier" = "8:_1AFC65E7_EBC4_4872_83F4_2F8EB37CABCC"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
@@ -294,10 +300,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_21A38EB59C7743D49C1BF37A3DCFE112"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18BF904A97A84D00A520470AC2A1834B"
             {
-            "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\Optimization.srf"
-            "TargetName" = "8:Optimization.srf"
+            "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\ProductionClosed.srf"
+            "TargetName" = "8:ProductionClosed.srf"
+            "Tag" = "8:"
+            "Folder" = "8:_FE4FC0B8608D48639C0786C2CC82D7D5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1A38DC2949774D36BAB28D4C38456ECC"
+            {
+            "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\Maruni_Production.xml"
+            "TargetName" = "8:Maruni_Production.xml"
             "Tag" = "8:"
             "Folder" = "8:_FE4FC0B8608D48639C0786C2CC82D7D5"
             "Condition" = "8:"
@@ -405,6 +431,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5DA2CB671D1C472AAD0FF65715F470FE"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Maruni_Production, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_5DA2CB671D1C472AAD0FF65715F470FE"
+                    {
+                    "Name" = "8:Maruni_Production.exe"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\Maruni_Production.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_FE4FC0B8608D48639C0786C2CC82D7D5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5DC7512A86A21ED08792F0046BBC6BA7"
             {
             "SourcePath" = "8:SAPbouiCOM.exe"
@@ -476,37 +533,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7C7DA881CA8841809C854FB5D770F023"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Maruni_Production, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_7C7DA881CA8841809C854FB5D770F023"
-                    {
-                    "Name" = "8:Maruni_Production.exe"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\Maruni_Production.exe"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_FE4FC0B8608D48639C0786C2CC82D7D5"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8BC9D81C33E848BCA265AC4246E8E490"
             {
             "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\ListOptimize.srf"
@@ -527,10 +553,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C203438D33B74B8AA21A704535C9838A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ABBC5C1C0C864E2FB6EEA24829823263"
             {
-            "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\Maruni_Production.xml"
-            "TargetName" = "8:Maruni_Production.xml"
+            "SourcePath" = "8:..\\..\\Maruni_Production_100\\Maruni_Production_100\\bin\\Optimization.srf"
+            "TargetName" = "8:Optimization.srf"
             "Tag" = "8:"
             "Folder" = "8:_FE4FC0B8608D48639C0786C2CC82D7D5"
             "Condition" = "8:"
@@ -663,14 +689,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MDSADDON"
-        "ProductCode" = "8:{C0B7338F-B7D6-4E74-AD9E-BB12FB74A27A}"
-        "PackageCode" = "8:{2BF418D1-5B8A-4BAB-9542-F27E68629147}"
-        "UpgradeCode" = "8:{CE375C72-2A9A-44E9-9CB7-A199550538BB}"
+        "ProductCode" = "8:{03B710DD-B4EA-4473-844A-986EEFA7368D}"
+        "PackageCode" = "8:{97610ABF-7F20-41B1-A3E0-BC3386417CBA}"
+        "UpgradeCode" = "8:{A7AC884F-DF3C-49FA-BAE3-E63299BDE6AD}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.16"
+        "ProductVersion" = "8:1.0.17"
         "Manufacturer" = "8:Mitra Inti Solusindo"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1182,7 +1208,7 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C427D7C06E8A42A9A5F91F7C46564C43"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B1C9C2DAA3534C00B73FEEC512FBBCB2"
             {
             "SourcePath" = "8:..\\CustomerLibrary\\obj\\x86\\Release\\CustomerLibTemplate.dll"
             "TargetName" = "8:"

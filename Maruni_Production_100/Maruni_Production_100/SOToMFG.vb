@@ -555,7 +555,14 @@ Public Class SOToMFG
             & " when T1.[U_SO_Bentuk] ='M' then 'Mal' " _
             & " when T1.[U_SO_Bentuk] ='X' then 'Others' " _
             & " Else 'Undefined' " _
-            & " End SO_Bentuk " _
+            & " End SO_Bentuk, " _
+            & " Case " _
+            & " when T0.U_SOApprovalStatus ='A' then 'SO Approved' " _
+            & " when T0.U_SOApprovalStatus ='D' then 'SO Draft' " _
+            & " when T0.U_SOApprovalStatus ='O' then 'SO Reguler' " _
+            & " Else T0.U_SOApprovalStatus " _
+            & " End [SO Approval Status], " _
+            & " T1.LineNum [SO LineNum] " _
             & " FROM ORDR T0 " _
             & " LEFT JOIN RDR1 T1 ON T0.DocEntry = T1.DocEntry " _
             & " LEFT JOIN OITM T2 ON T1.ItemCode = T2.ItemCode " _
@@ -611,7 +618,14 @@ Public Class SOToMFG
             & " when T1.[U_SO_Bentuk] ='M' then 'Mal' " _
             & " when T1.[U_SO_Bentuk] ='X' then 'Others' " _
             & " Else 'Undefined' " _
-            & " End SO_Bentuk " _
+            & " End SO_Bentuk, " _
+            & " Case " _
+            & " when T0.U_SOApprovalStatus ='A' then 'SO Approved' " _
+            & " when T0.U_SOApprovalStatus ='D' then 'SO Draft' " _
+            & " when T0.U_SOApprovalStatus ='O' then 'SO Reguler' " _
+            & " Else T0.U_SOApprovalStatus " _
+            & " End [SO Approval Status], " _
+            & " T1.LineNum [SO LineNum] " _
             & " FROM ORDR T0 " _
             & " LEFT JOIN RDR1 T1 ON T0.DocEntry = T1.DocEntry " _
             & " LEFT JOIN OITM T2 ON T1.ItemCode = T2.ItemCode " _
@@ -642,6 +656,208 @@ Public Class SOToMFG
         oForm.Visible = True
 
     End Sub
+
+    '-------------- Yadi FC ----------------------------
+    Private Sub ProductionClosed()
+        Dim oForm As SAPbouiCOM.Form
+
+        Dim PCQuery As String
+        Dim oItem As SAPbouiCOM.Item
+        Dim oEditText As SAPbouiCOM.EditText
+        Dim oButton As SAPbouiCOM.Button
+
+        Dim oProductionClosedGrid As SAPbouiCOM.Grid
+
+        Try
+            oForm = SBO_Application.Forms.Item("MDS_P6")
+            SBO_Application.MessageBox("Form Already Open")
+        Catch ex As Exception
+            Dim fcp As SAPbouiCOM.FormCreationParams
+            fcp = SBO_Application.CreateObject(SAPbouiCOM.BoCreatableObjectType.cot_FormCreationParams)
+            fcp.BorderStyle = SAPbouiCOM.BoFormBorderStyle.fbs_Sizable
+            fcp.FormType = "MDS_P6"
+            fcp.UniqueID = "MDS_P6"
+
+            fcp.XmlData = LoadFromXML("ProductionClosed.srf")
+            oForm = SBO_Application.Forms.AddEx(fcp)
+
+            oForm.Freeze(True)
+
+            ' Add User DataSource
+            ' not binding to SBO data or UDO/UDF
+            oForm.DataSources.UserDataSources.Add("txtDate1", SAPbouiCOM.BoDataType.dt_DATE)
+            oForm.DataSources.UserDataSources.Add("txtDate2", SAPbouiCOM.BoDataType.dt_DATE)
+
+
+            'Default value for SO Date
+            oForm.DataSources.UserDataSources.Item("txtDate1").Value = DateTime.Today.ToString("yyyyMMdd")
+            oForm.DataSources.UserDataSources.Item("txtDate2").Value = DateTime.Today.ToString("yyyyMMdd")
+
+            oForm.Items.Item("txtDate1").Width = 100
+            oEditText = oForm.Items.Item("txtDate1").Specific
+            oEditText.DataBind.SetBound(True, "", "txtDate1")
+
+            oForm.Items.Item("txtDate2").Width = 100
+            oEditText = oForm.Items.Item("txtDate2").Specific
+            oEditText.DataBind.SetBound(True, "", "txtDate2")
+
+
+
+            oItem = oForm.Items.Item("grdPC")
+            oItem.Left = 5
+            oItem.Top = 90
+            oItem.Width = oForm.ClientWidth - 10
+            oItem.Height = oForm.ClientHeight - 150
+
+
+            oProductionClosedGrid = oItem.Specific
+
+            oProductionClosedGrid.SelectionMode = SAPbouiCOM.BoMatrixSelect.ms_Auto
+
+            oForm.Freeze(False)
+
+
+            PCQuery = " SELECT CONVERT(VARCHAR(10), ROW_NUMBER() OVER(ORDER BY A.DOCNUM)) #,  CASE WHEN  ISNULL(A.PlannedQty,0) - ISNULL(A.CmpltQty,0) = 0 THEN 'Y' ELSE 'N' END [Check], A.DocEntry [Pdo Entry]  " _
+                          & " , A.DocNum [Pdo #], A.ItemCode [Product No.], B.ItemName [Product Description], ISNULL(A.PlannedQty,0) [Planned Qty] " _
+                          & " , ISNULL(A.CmpltQty,0) [Complete Qty], A.PostDate [Pdo Order Date], A.DueDate [Pdo Due Date], (select DocEntry from ORDR where DocNum = A.OriginNum ) [SO DocEntry], A.OriginNum [SO #] " _
+                          & " , A.CardCode [Customer Code], C.CardName [Customer Name]  " _
+                      & " FROM OWOR A " _
+                          & " INNER JOIN OITM B ON A.ItemCode = B.ItemCode " _
+                          & " INNER JOIN OCRD C ON A.CardCode = C.CardCode " _
+                      & " WHERE A.Status = 'R' " _
+                          & " AND A.PostDate >= '" & Format(CDate(oForm.Items.Item("txtDate1").Specific.string), "yyyyMMdd") & "' " _
+                          & " AND A.PostDate <= '" & Format(CDate(oForm.Items.Item("txtDate2").Specific.string), "yyyyMMdd") & "' "
+
+            ' Grid #: 1
+            oForm.DataSources.DataTables.Add("PCLst")
+            oForm.DataSources.DataTables.Item("PCLst").ExecuteQuery(PCQuery)
+            oProductionClosedGrid.DataTable = oForm.DataSources.DataTables.Item("PCLst")
+
+
+            'oForm = Nothing
+            oEditText = Nothing
+            oItem = Nothing
+            oButton = Nothing
+            oProductionClosedGrid = Nothing
+
+            GC.Collect()
+
+        End Try
+
+
+        PCQuery = " SELECT CONVERT(VARCHAR(10), ROW_NUMBER() OVER(ORDER BY A.DOCNUM)) #,  CASE WHEN  ISNULL(A.PlannedQty,0) - ISNULL(A.CmpltQty,0) = 0 THEN 'Y' ELSE 'N' END [Check], A.DocEntry [Pdo Entry] " _
+                          & " , A.DocNum [Pdo #], A.ItemCode [Product No.], B.ItemName [Product Description], ISNULL(A.PlannedQty,0) [Planned Qty] " _
+                          & " , ISNULL(A.CmpltQty,0) [Complete Qty], A.PostDate [Pdo Order Date], A.DueDate [Pdo Due Date], (select DocEntry from ORDR where DocNum = A.OriginNum ) [SO DocEntry], A.OriginNum [SO #] " _
+                          & " , A.CardCode [Customer Code], C.CardName [Customer Name]  " _
+                      & " FROM OWOR A " _
+                          & " INNER JOIN OITM B ON A.ItemCode = B.ItemCode " _
+                          & " INNER JOIN OCRD C ON A.CardCode = C.CardCode " _
+                      & " WHERE A.Status = 'R' " _
+                          & " AND A.PostDate >= '" & Format(CDate(oForm.Items.Item("txtDate1").Specific.string), "yyyyMMdd") & "' " _
+                          & " AND A.PostDate <= '" & Format(CDate(oForm.Items.Item("txtDate2").Specific.string), "yyyyMMdd") & "' "
+
+
+
+        oForm.DataSources.DataTables.Item(0).ExecuteQuery(PCQuery)
+
+        oForm.Items.Item("txtDate1").Click()
+
+
+
+        RearrangePCGrid(oForm)
+
+
+        oForm.Visible = True
+
+    End Sub
+    '-------------- Yadi FC ----------------------------
+
+
+    '-------------- Yadi FC ----------------------------
+    Private Sub RearrangePCGrid(ByVal oForm As SAPbouiCOM.Form)
+
+        Dim oColumn As SAPbouiCOM.EditTextColumn
+        Dim oCheck As SAPbouiCOM.CheckBoxColumn
+        Dim idx As Long
+
+        Dim oPCGrid As SAPbouiCOM.Grid
+
+        oForm.Freeze(True)
+
+        oPCGrid = oForm.Items.Item("grdPC").Specific
+
+        oPCGrid.RowHeaders.Width = 50
+
+        'Adding LinkedButton (Orange) : Set Property-> LinkedObjectType
+        oColumn = oPCGrid.Columns.Item("Pdo Entry")
+        oColumn.LinkedObjectType = SAPbouiCOM.BoLinkedObject.lf_ProductionOrder
+
+        oColumn = oPCGrid.Columns.Item("SO DocEntry")
+        oColumn.LinkedObjectType = SAPbouiCOM.BoLinkedObject.lf_Order
+
+        oColumn = oPCGrid.Columns.Item("Customer Code")
+        oColumn.LinkedObjectType = SAPbouiCOM.BoLinkedObject.lf_BusinessPartner
+
+
+        oPCGrid.Columns.Item("Check").Type = SAPbouiCOM.BoGridColumnType.gct_CheckBox
+        oPCGrid.Columns.Item("Check").TitleObject.Sortable = True
+
+        oPCGrid.Columns.Item("#").Width = 30
+        oPCGrid.Columns.Item("Check").Width = 40
+        oPCGrid.Columns.Item("Pdo Entry").Width = 80
+        oPCGrid.Columns.Item("Pdo #").Width = 80
+        oPCGrid.Columns.Item("Product No.").Width = 80
+        oPCGrid.Columns.Item("Product Description").Width = 150
+        oPCGrid.Columns.Item("Planned Qty").Width = 60
+        oPCGrid.Columns.Item("Complete Qty").Width = 60
+        oPCGrid.Columns.Item("Pdo Order Date").Width = 80
+        oPCGrid.Columns.Item("Pdo Due Date").Width = 80
+        oPCGrid.Columns.Item("SO DocEntry").Width = 80
+        oPCGrid.Columns.Item("SO #").Width = 80
+        oPCGrid.Columns.Item("Customer Code").Width = 80
+        oPCGrid.Columns.Item("Customer Name").Width = 150
+
+
+
+        oPCGrid.SelectionMode = SAPbouiCOM.BoMatrixSelect.ms_Auto
+
+
+
+
+        oPCGrid.Columns.Item("#").Editable = False
+        oPCGrid.Columns.Item("Check").Editable = True
+        oPCGrid.Columns.Item("Pdo Entry").Editable = False
+        oPCGrid.Columns.Item("Pdo #").Editable = False
+        oPCGrid.Columns.Item("Product No.").Editable = False
+        oPCGrid.Columns.Item("Product Description").Editable = False
+        oPCGrid.Columns.Item("Planned Qty").Editable = False
+        oPCGrid.Columns.Item("Complete Qty").Editable = False
+        oPCGrid.Columns.Item("Pdo Order Date").Editable = False
+        oPCGrid.Columns.Item("Pdo Due Date").Editable = False
+        oPCGrid.Columns.Item("SO DocEntry").Editable = False
+        oPCGrid.Columns.Item("SO #").Editable = False
+        oPCGrid.Columns.Item("Customer Code").Editable = False
+        oPCGrid.Columns.Item("Customer Name").Editable = False
+
+        Dim sboDate As String
+        Dim dDate As DateTime
+
+        'dDate = DateTime.Now
+
+        'sbo formatdate
+        sboDate = oMIS_Utils.fctFormatDate(dDate, oCompany)
+
+        oForm.Freeze(False)
+
+        'MsgBox(GC.GetTotalMemory(True))
+
+        oColumn = Nothing
+        oPCGrid = Nothing
+        GC.Collect()
+        'MsgBox(GC.GetTotalMemory(True))
+
+    End Sub
+    '-------------- Yadi FC ----------------------------
 
     Private Sub OptimizationEntry()
         Dim oForm As SAPbouiCOM.Form
@@ -787,7 +1003,7 @@ Public Class SOToMFG
             'oItem = oForm.Items.Item("OptimMtx").Specific
             oItem = oForm.Items.Item("OptimMtx")
             oItem.Width = 980
-            oItem.Height = 350
+            oItem.Height = 300
 
 
             oMatrix = oItem.Specific
@@ -1035,6 +1251,92 @@ Public Class SOToMFG
 
     End Sub
 
+    '-------------- Yadi FC ----------------------------
+    Private Sub LoadProductionClosed(ByVal oForm As SAPbouiCOM.Form)
+        Dim PCQuery As String
+        PCQuery = " SELECT CONVERT(VARCHAR(10), ROW_NUMBER() OVER(ORDER BY A.DOCNUM)) #, CASE WHEN  ISNULL(A.PlannedQty,0) - ISNULL(A.CmpltQty,0) = 0 THEN 'Y' ELSE 'N' END [Check], A.DocEntry [Pdo Entry] " _
+                                  & " , A.DocNum [Pdo #], A.ItemCode [Product No.], B.ItemName [Product Description], ISNULL(A.PlannedQty,0) [Planned Qty] " _
+                                  & " , ISNULL(A.CmpltQty,0) [Complete Qty], A.PostDate [Pdo Order Date], A.DueDate [Pdo Due Date], (select DocEntry from ORDR where DocNum = A.OriginNum ) [SO DocEntry], A.OriginNum [SO #] " _
+                                  & " , A.CardCode [Customer Code], C.CardName [Customer Name]  " _
+                              & " FROM OWOR A " _
+                                  & " INNER JOIN OITM B ON A.ItemCode = B.ItemCode " _
+                                  & " INNER JOIN OCRD C ON A.CardCode = C.CardCode " _
+                              & " WHERE A.Status = 'R' " _
+                                  & " AND A.PostDate >= '" & Format(CDate(oForm.Items.Item("txtDate1").Specific.string), "yyyyMMdd") & "' " _
+                                  & " AND A.PostDate <= '" & Format(CDate(oForm.Items.Item("txtDate2").Specific.string), "yyyyMMdd") & "' "
+
+        oForm.DataSources.DataTables.Item(0).ExecuteQuery(PCQuery)
+
+        RearrangePCGrid(oForm)
+
+    End Sub
+    '-------------- Yadi FC ----------------------------
+
+    '-------------- Yadi FC ----------------------------
+    Private Sub UpdateProductionClosed(ByVal oForm As SAPbouiCOM.Form)
+        Dim oProductionOrder As SAPbobsCOM.ProductionOrders = Nothing
+        Dim oPCGrid As SAPbouiCOM.Grid
+        Dim intI As Integer = 0
+        Dim RetVal As Boolean
+
+        oPCGrid = oForm.Items.Item("grdPC").Specific
+        oPCGrid.Columns.Item("Check").TitleObject.Sort(SAPbouiCOM.BoGridSortType.gst_Ascending)
+
+        For intI = oPCGrid.Rows.Count - 1 To 0 Step -1
+            SBO_Application.SetStatusBarMessage("Processing.... Start !!! " & intI + 1 & " ", SAPbouiCOM.BoMessageTime.bmt_Short, False)
+            'oForm.Items.Item("Pdo #").Click()
+
+            If oPCGrid.DataTable.GetValue(1, oPCGrid.GetDataTableRowIndex(intI)) = "Y" Then
+                oProductionOrder = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oProductionOrders)
+                'oForm.Items.Item("Pdo #").Click()
+
+                If Not oCompany.InTransaction Then
+                    oCompany.StartTransaction()
+                End If
+
+                RetVal = oProductionOrder.GetByKey(oPCGrid.DataTable.GetValue(2, oPCGrid.GetDataTableRowIndex(intI)))
+
+                If RetVal = True Then
+                    'oProductionOrder.ProductionOrderOriginEntry = oPCGrid.DataTable.GetValue(2, oPCGrid.GetDataTableRowIndex(intI))
+                    oProductionOrder.ProductionOrderStatus = SAPbobsCOM.BoProductionOrderStatusEnum.boposClosed
+                    lRetCode = oProductionOrder.Update()
+
+                    If lRetCode <> 0 Then
+                        If oCompany.InTransaction Then
+                            oCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
+                        End If
+
+                        'System.Runtime.InteropServices.Marshal.ReleaseComObject(oProductionOrder)
+                        'oProductionOrder = Nothing
+                    Else
+
+                        If oCompany.InTransaction Then
+                            oCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit)
+                        End If
+                    End If
+
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject(oProductionOrder)
+                    oProductionOrder = Nothing
+
+                    GC.Collect()
+
+                End If
+            Else
+                Exit For
+            End If
+        Next
+
+
+        SBO_Application.SetStatusBarMessage("Processing.... Finished !!! ", SAPbouiCOM.BoMessageTime.bmt_Short, False)
+
+        SBO_Application.MessageBox("Processing.... Finished !!! ", 1, "Ok")
+
+        'System.Runtime.InteropServices.Marshal.ReleaseComObject(oProductionOrder)
+        'oProductionOrder = Nothing
+        'GC.Collect()
+
+    End Sub
+    '-------------- Yadi FC ----------------------------
 
     Private Sub LoadSO(ByVal oForm As SAPbouiCOM.Form)
         Dim SOToMFGQuery As String
@@ -1069,18 +1371,28 @@ Public Class SOToMFG
             & " when T1.[U_SO_Bentuk] ='M' then 'Mal' " _
             & " when T1.[U_SO_Bentuk] ='X' then 'Others' " _
             & " Else 'Undefined' " _
-            & " End SO_Bentuk " _
+            & " End SO_Bentuk, " _
+            & " Case " _
+            & " when T0.U_SOApprovalStatus ='A' then 'SO Approved' " _
+            & " when T0.U_SOApprovalStatus ='D' then 'SO Draft' " _
+            & " when T0.U_SOApprovalStatus ='O' then 'SO Reguler' " _
+            & " Else T0.U_SOApprovalStatus " _
+            & " End [SO Approval Status], " _
+            & " T1.LineNum [SO LineNum] " _
             & " FROM ORDR T0 " _
             & " LEFT JOIN RDR1 T1 ON T0.DocEntry = T1.DocEntry " _
             & " LEFT JOIN OITM T2 ON T1.ItemCode = T2.ItemCode " _
             & " LEFT JOIN OSLP T3 ON T1.SlpCode = T3.SlpCode " _
+            & " LEFT JOIN OWOR T4 ON T4.OriginNum = T0.DocNum AND T4.ItemCode = T1.ItemCode " _
+            & "     AND T4.U_ORDRDocEntry = T0.DocEntry AND T4.U_ORDRLineNum = T1.LineNum " _
         & " Where T0.DocDate >= '" & Format(CDate(oForm.Items.Item("SODateFrom").Specific.string), "yyyyMMdd") & "' " _
             & " AND T0.DocDate <= '" & Format(CDate(oForm.Items.Item("SODateTo").Specific.string), "yyyyMMdd") & "' " _
             & " AND T1.LineStatus = 'O' " _
             & " AND T0.CardCode = '" & oForm.Items.Item("BPCardCode").Specific.string & "' " _
             & " AND (T1.U_MIS_ReleasePdOFlag = '' OR T1.U_MIS_ReleasePdOFlag IS NULL) " _
             & " AND T0.Docnum = " & oForm.Items.Item("SoNumber").Specific.value & " " _
-            & " AND T0.U_SOApprovalStatus <> 'D' " _
+            & " AND ISNULL(T0.U_SOApprovalStatus, '') <> 'D' " _
+            & " AND T1.Quantity - ISNULL(T4.PlannedQty, 0) > 0 " _
             & " ORDER BY T0.DocDate, T0.DocNum, VisOrder DESC "
         '& " AND T1.WhsCode = 'FG-002' " _
 
@@ -1911,6 +2223,11 @@ Public Class SOToMFG
                         'oprod1.UserFields.Fields.Item("U_PdO_Bentuk").Value = "segi"
                         'oprod1.UserFields.Fields.Item("U_NBS_OnHoldReason").Value = "test123"
 
+                        oProd1.UserFields.Fields.Item("U_ORDRDocEntry").Value = _
+                        oSOToMFGGrid.DataTable.GetValue(3, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString).ToString()
+                        oProd1.UserFields.Fields.Item("U_ORDRLineNum").Value = _
+                        oSOToMFGGrid.DataTable.GetValue(19, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString).ToString()
+
                         oProdLine1 = oProd1.Lines
 
                         ' Generate one line - Dummy item
@@ -1976,14 +2293,14 @@ Public Class SOToMFG
                             End If
                         Else
 
-                            Dim PdOno As String = ""
-                            Dim tmpKey As Double
-                            Dim vSOLine As Long
+                            'Dim PdOno As String = ""
+                            'Dim tmpKey As Double
+                            'Dim vSOLine As Long
 
-                            'vCompany.GetNewObjectCode(tmpKey)
-                            'vCompany.GetNewObjectCode(PdOno)
-                            oCompany.GetNewObjectCode(PdOno)
-                            tmpKey = Convert.ToInt32(PdOno)
+                            ''vCompany.GetNewObjectCode(tmpKey)
+                            ''vCompany.GetNewObjectCode(PdOno)
+                            'oCompany.GetNewObjectCode(PdOno)
+                            'tmpKey = Convert.ToInt32(PdOno)
 
                             ' !!!! Make sure before create another object type-> clear previous/current object type.
                             System.Runtime.InteropServices.Marshal.ReleaseComObject(oProdLine1)
@@ -1992,36 +2309,37 @@ Public Class SOToMFG
                             System.Runtime.InteropServices.Marshal.ReleaseComObject(oProd1)
                             oProd1 = Nothing
 
-                            'GC.Collect()
+                            GC.Collect()
 
                             oForm.Items.Item("SoNumber").Click()
 
-                            'vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
+
+                            ''vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
 
 
-                            'oSalesOrder = vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
-                            oSalesOrder = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
-                            oSalesOrder.GetByKey(oSOToMFGGrid.DataTable.GetValue(3, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString))
-                            'oSalesOrder.UserFields.Fields.Item("U_MIS_ReasonCode").Value = "T1"
+                            ''oSalesOrder = vCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
+                            'oSalesOrder = oCompany.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oOrders)
+                            'oSalesOrder.GetByKey(oSOToMFGGrid.DataTable.GetValue(3, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString))
+                            ''oSalesOrder.UserFields.Fields.Item("U_MIS_ReasonCode").Value = "T1"
 
-                            vSOLine = oSOToMFGGrid.DataTable.GetValue(5, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) - 1
-                            oSalesOrderLines = oSalesOrder.Lines
-                            'oSalesOrderLines.SetCurrentLine(oSOToMFGGrid.DataTable.GetValue(5, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) - 1)
-                            oSalesOrderLines.SetCurrentLine(vSOLine)
-                            'oSalesOrderLines.SetCurrentLine(10)
+                            'vSOLine = oSOToMFGGrid.DataTable.GetValue(5, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) - 1
+                            'oSalesOrderLines = oSalesOrder.Lines
+                            ''oSalesOrderLines.SetCurrentLine(oSOToMFGGrid.DataTable.GetValue(5, oSOToMFGGrid.GetDataTableRowIndex(idx).ToString) - 1)
+                            'oSalesOrderLines.SetCurrentLine(vSOLine)
+                            ''oSalesOrderLines.SetCurrentLine(10)
 
-                            oSalesOrderLines.UserFields.Fields.Item("U_MIS_SupplyWith").Value = "M"
-                            oSalesOrderLines.UserFields.Fields.Item("U_MIS_ReleasePdOFlag").Value = "Y"
-                            oSalesOrderLines.UserFields.Fields.Item("U_MIS_PdONum").Value = PdOno  '"1010025702"
+                            'oSalesOrderLines.UserFields.Fields.Item("U_MIS_SupplyWith").Value = "M"
+                            'oSalesOrderLines.UserFields.Fields.Item("U_MIS_ReleasePdOFlag").Value = "Y"
+                            'oSalesOrderLines.UserFields.Fields.Item("U_MIS_PdONum").Value = PdOno  '"1010025702"
 
-                            oSalesOrder.Update()
+                            'oSalesOrder.Update()
 
-                            'System.Runtime.InteropServices.Marshal.ReleaseComObject(oSalesOrderLines)
-                            System.Runtime.InteropServices.Marshal.ReleaseComObject(oSalesOrder)
-                            oSalesOrder = Nothing
-                            'oSalesOrderLines = Nothing
+                            ''System.Runtime.InteropServices.Marshal.ReleaseComObject(oSalesOrderLines)
+                            'System.Runtime.InteropServices.Marshal.ReleaseComObject(oSalesOrder)
+                            'oSalesOrder = Nothing
+                            ''oSalesOrderLines = Nothing
 
-                            'vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
+                            ''vCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack)
 
                             If oCompany.InTransaction Then
                                 oCompany.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit)
@@ -2346,10 +2664,14 @@ errHandler:
         oSOToMFGGrid.Columns.Item("Quantity").Editable = False
         oSOToMFGGrid.Columns.Item("UOM").Editable = False
         oSOToMFGGrid.Columns.Item("Exp Delivery Date").Editable = False
+
         oSOToMFGGrid.Columns.Item("WhsCode").Editable = False
         oSOToMFGGrid.Columns.Item("PanjangInCm").Editable = False
         oSOToMFGGrid.Columns.Item("LebarInCm").Editable = False
         oSOToMFGGrid.Columns.Item("SO_Bentuk").Editable = False
+
+        oSOToMFGGrid.Columns.Item("SO Approval Status").Editable = False
+        oSOToMFGGrid.Columns.Item("SO LineNum").Editable = False
 
 
         oSOToMFGGrid.RowHeaders.Width = 20
@@ -4743,6 +5065,80 @@ errHandler:
                     '    End If
                     'End If
 
+                    '-------------- Yadi FC ----------------------------
+                Case "MDS_P6"
+                    If (pVal.EventType = SAPbouiCOM.BoEventTypes.et_ITEM_PRESSED And pVal.ItemUID = "btnShow") Then
+                        Dim oForm As SAPbouiCOM.Form
+                        oForm = SBO_Application.Forms.Item(FormUID)
+                        LoadProductionClosed(oForm)
+                    End If
+
+
+                    If (pVal.EventType = SAPbouiCOM.BoEventTypes.et_ITEM_PRESSED And pVal.ItemUID = "btnCancel") Then
+                        Dim oForm As SAPbouiCOM.Form
+                        oForm = SBO_Application.Forms.Item(FormUID)
+                        oForm.Close()
+                    End If
+
+                    If (pVal.EventType = SAPbouiCOM.BoEventTypes.et_ITEM_PRESSED And pVal.ItemUID = "btnUpdate") Then
+                        Dim oForm As SAPbouiCOM.Form
+                        oForm = SBO_Application.Forms.Item(FormUID)
+
+                        UpdateProductionClosed(oForm)
+                        LoadProductionClosed(oForm)
+                    End If
+
+                    '-------------- Yadi FC ----------------------------
+                    'toggle select/unselect all
+                    'If pVal.ColUID = "Release PdO" And pVal.EventType = SAPbouiCOM.BoEventTypes.et_CLICK And pVal.Row = -1 Then
+                    If pVal.ColUID = "Check" And pVal.EventType = SAPbouiCOM.BoEventTypes.et_CLICK And pVal.Row = -1 Then
+                        Dim oForm As SAPbouiCOM.Form
+                        oForm = SBO_Application.Forms.Item(FormUID)
+                        Dim oProdClosedGrid As SAPbouiCOM.Grid
+
+                        Dim idx As Long
+                        Dim dt As SAPbouiCOM.DataTable
+
+                        Dim str As String
+
+                        dt = oForm.DataSources.DataTables.Item("PCLst")
+
+                        oProdClosedGrid = oForm.Items.Item("grdPC").Specific
+
+                        'get total row count selected
+                        'oProdClosedGrid.Rows.SelectedRows.Count.ToString()
+
+
+                        oProdClosedGrid = oForm.Items.Item("grdPC").Specific
+
+                        If oProdClosedGrid.Columns.Item(1).TitleObject.Caption = "Select All" Then
+                            'select/check all
+                            oForm.Freeze(True)
+
+                            For idx = 0 To oProdClosedGrid.Rows.Count - 1
+                                If oProdClosedGrid.DataTable.GetValue(6, oProdClosedGrid.GetDataTableRowIndex(idx)) = _
+                                    oProdClosedGrid.DataTable.GetValue(7, oProdClosedGrid.GetDataTableRowIndex(idx)) Then
+                                    dt.SetValue("Check", idx, "Y")
+                                End If
+                                'str = oProdClosedGrid.Columns.Item(idx).Description
+                                str = oProdClosedGrid.DataTable.GetValue(1, oProdClosedGrid.GetDataTableRowIndex(idx))
+                            Next
+                            oProdClosedGrid.Columns.Item(1).TitleObject.Caption = "Reset All"
+                            oForm.Freeze(False)
+                        Else
+                            'unselect/uncheck all
+                            oForm.Freeze(True)
+                            For idx = 0 To oProdClosedGrid.Rows.Count - 1
+                                dt.SetValue("Check", idx, "N")
+                            Next
+                            oProdClosedGrid.Columns.Item(1).TitleObject.Caption = "Select All"
+                            oForm.Freeze(False)
+                        End If
+
+                        'MsgBox("dblclick grid column header: " & pVal.ColUID.ToString)
+
+                    End If
+
             End Select
         End If
 
@@ -4758,6 +5154,10 @@ errHandler:
                     OutDelEntry()
                 Case "PROD01_05"
                     ProductionStatus()
+                    '-------------- Yadi FC ----------------------------
+                Case "PROD01_06"
+                    ProductionClosed()
+                    '-------------- Yadi FC ----------------------------
             End Select
         End If
         If pVal.BeforeAction = True Then
